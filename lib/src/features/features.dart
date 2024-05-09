@@ -1,0 +1,10 @@
+export 'book_details/book_details.dart';
+export 'brrow_book/brrow_book.dart';
+export 'explore/explore.dart';
+export 'favorites/favourites.dart';
+export 'home/home.dart';
+export 'login/login.dart';
+export 'profile/profile.dart';
+export 'settings/settings.dart';
+export 'splash/splash.dart';
+export 'tabs/tabs.dart';
