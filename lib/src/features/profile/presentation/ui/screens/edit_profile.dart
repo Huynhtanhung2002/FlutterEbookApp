@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  const EditProfileScreen({Key? key}) : super(key: key);
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  File? _image;
+  final ImagePicker _picker = ImagePicker(); // Create an instance of ImagePicker
   final TextEditingController _passwordController = TextEditingController(); // Thêm controller cho mật khẩu
 
   @override
@@ -15,6 +20,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _passwordController.dispose(); // Hủy bỏ controller khi không cần thiết nữa
     super.dispose();
   }
+
+  Future getImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery); // Use pickImage instead of getImage
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +45,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            GestureDetector(
+              onTap: getImage,
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 50, // Đặt bán kính cho avatar
+                    backgroundImage: _image != null ? FileImage(_image!) : const AssetImage('assets/images/empty.png') as ImageProvider<Object>,
+                    child: _image == null ? const Icon(Icons.camera_alt) : null,
+                  ),
+                  if (_image != null) // Kiểm tra xem đã chọn ảnh chưa
+                    const Positioned.fill(
+                      child: Opacity(
+                        opacity: 0.8,
+                        child: Icon(Icons.camera_alt), // Hiển thị biểu tượng máy ảnh mờ
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
             const Text(
               'Student ID',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -36,6 +75,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
+            // Avatar
             const Text(
               'Change Password',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
